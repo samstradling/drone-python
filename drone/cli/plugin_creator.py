@@ -10,8 +10,6 @@ See :py:func:`prompt_for_variables` for details on the variables and how
 the substitutions work.
 """
 from future import standard_library
-standard_library.install_aliases()
-
 import io
 import os
 import shutil
@@ -21,6 +19,8 @@ import argparse
 import tempfile
 import datetime
 import urllib.request  # noqa
+standard_library.install_aliases()
+
 
 socket.setdefaulttimeout(10.0)
 TEMPLATE_REPO = {
