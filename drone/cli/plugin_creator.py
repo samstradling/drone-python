@@ -16,9 +16,10 @@ import shutil
 import socket
 import zipfile
 import argparse
-import tempfile
 import datetime
-import urllib.request  # noqa
+
+from .compat import input, tempfile, urlopen
+
 standard_library.install_aliases()
 
 
@@ -45,7 +46,7 @@ def download_and_extract_template(plugin_path):
 
     template_archive_url = \
         "https://github.com/%(repo_owner)s/%(repo_name)s/archive/master.zip"
-    req = urllib.request.urlopen(template_archive_url % TEMPLATE_REPO)
+    req = urlopen(template_archive_url % TEMPLATE_REPO)
     # If the repo ever gets huge, we'll probably want to use a proper tempfile.
     fobj = io.BytesIO(req.read())
     zip_file = zipfile.ZipFile(file=fobj)
