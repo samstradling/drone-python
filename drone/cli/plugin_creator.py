@@ -9,7 +9,6 @@ in a mostly ready-to-go plugin directory.
 See :py:func:`prompt_for_variables` for details on the variables and how
 the substitutions work.
 """
-from future import standard_library
 import io
 import os
 import shutil
@@ -17,11 +16,12 @@ import socket
 import zipfile
 import argparse
 import datetime
-
-from .compat import input, tempfile, urlopen
+from builtins import input
+from backports import tempfile
+from future import standard_library
+from future.moves.urllib.request import urlopen
 
 standard_library.install_aliases()
-
 
 socket.setdefaulttimeout(10.0)
 TEMPLATE_REPO = {

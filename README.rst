@@ -13,6 +13,10 @@ drone-python
 .. image:: https://badges.gitter.im/Join%20Chat.svg
     :target: https://gitter.im/drone/drone-python?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
 
+.. image:: https://api.travis-ci.org/drone/drone-python.svg?branch=master
+    :target: https://travis-ci.org/drone/drone-python/
+
+
 This package contains a Python Drone_ HTTP API client, as well everything
 needed to write Drone plugins_.
 

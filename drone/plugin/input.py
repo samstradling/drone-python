@@ -4,11 +4,12 @@ input during development or normal runtime.
 """
 import sys
 import json
+import os
 
 
 def get_input():
     """
-    Look for input in argv and stdin. De-serialize and return whatever
+    Look for input in argv, environ and stdin. De-serialize and return whatever
     we can find.
 
     :rtype: dict
@@ -19,6 +20,8 @@ def get_input():
 
     if '--' in sys.argv:
         payload_str = _get_input_from_argv()
+    elif 'DRONE_REPO_OWNER' in os.environ:
+        payload_str = _get_input_from_env()
     else:
         payload_str = _get_input_from_stdin()
     return json.loads(payload_str)
@@ -56,3 +59,45 @@ def _get_input_from_argv():
             "A JSON payload was expected after the -- delimiter, but none "
             "was found.")
     return ' '.join(params)
+
+
+def _get_input_from_env():
+    """
+    Drone 0.8 passes parameters in via environment variables.
+
+    :rtype: str
+    :returns: The value passed to the plugin via environ.
+    :raises: ValueError if environment variables are not found.
+    """
+    try:
+        params = {
+            'repo': {
+                'owner': os.environ['DRONE_REPO_OWNER'],
+                'name': os.environ['DRONE_REPO_NAME'],
+                'full_name': os.environ['DRONE_REPO'],
+                'link_url': os.environ['DRONE_REPO_LINK'],
+                'clone_url': os.environ['DRONE_REMOTE_URL']
+            },
+            'build': {
+                'number': os.environ['DRONE_BUILD_NUMBER'],
+                'event': os.environ['DRONE_BUILD_EVENT'],
+                'branch': os.environ['DRONE_BRANCH'],
+                'commit': os.environ['DRONE_COMMIT'],
+                'ref': os.environ['DRONE_COMMIT_REF'],
+                'author': os.environ['DRONE_COMMIT_AUTHOR'],
+                'author_email': os.environ['DRONE_COMMIT_AUTHOR_EMAIL']
+            },
+            'workspace': {
+                'root': os.environ['DRONE_WORKSPACE'],
+                'path': os.environ['DRONE_WORKSPACE']
+            },
+            'vargs': {
+                key[7:].lower(): value
+                for key, value in os.environ.items()
+                if key.startswith('PLUGIN_')
+            }
+        }
+    except KeyError:
+        raise ValueError(
+            "Envronment variables were misconfigured.")
+    return json.dumps(params)
